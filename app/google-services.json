@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "446504824491",
+    "project_id": "futureself-4af37",
+    "storage_bucket": "futureself-4af37.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:446504824491:android:101b189673374eb4d811ee",
+        "android_client_info": {
+          "package_name": "xcom.nitesh.apps.timecapsuleapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkUNDW5n2nrCjHBqyK36mNs0_vDBNmqtg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
