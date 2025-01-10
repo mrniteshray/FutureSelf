@@ -76,7 +76,7 @@ class AddMsgActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(this, "Invalid Date. Please select a valid date.", Toast.LENGTH_SHORT).show()
                 }
-//                saveToFirebase(title, message, selectedFutureDate!!)
+                saveToFirebase(title, message, selectedFutureDate!!)
             }
         }
 

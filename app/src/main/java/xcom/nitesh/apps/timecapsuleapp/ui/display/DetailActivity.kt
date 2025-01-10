@@ -44,9 +44,13 @@ class DetailActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 if (!it.isEmpty) {
                     val message = it.toObjects(CapsuleData::class.java)
+                    binding.progressBar.visibility = View.GONE
+                    binding.title.visibility = View.VISIBLE
+                    binding.messagetv.visibility = View.VISIBLE
+                    binding.textView5.visibility = View.VISIBLE
+                    binding.textView6.visibility = View.VISIBLE
                     binding.title.text = message[0].title
                     binding.messagetv.text = message[0].content
-                    binding.progressBar.visibility = View.GONE
                 } else {
                     Toast.makeText(this, "No Message Found", Toast.LENGTH_SHORT).show()
                 }
