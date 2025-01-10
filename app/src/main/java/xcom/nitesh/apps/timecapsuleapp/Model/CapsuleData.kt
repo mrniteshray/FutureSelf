@@ -7,8 +7,9 @@ data class CapsuleData(
     val content: String,
     val createdDate: String,
     val unlockDate: String,
+    val unlockTime: String,
     val isUnlocked: Boolean
 ){
-    constructor() : this("", "", "", "", false)
+    constructor() : this("", "", "", "", "",false)
 
 }
