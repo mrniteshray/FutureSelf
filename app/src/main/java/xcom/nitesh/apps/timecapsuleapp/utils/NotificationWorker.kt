@@ -10,6 +10,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import xcom.nitesh.apps.timecapsuleapp.R
 import xcom.nitesh.apps.timecapsuleapp.ui.addmessage.AddMsgActivity
+import xcom.nitesh.apps.timecapsuleapp.ui.display.DetailActivity
 
 class NotificationWorker(
     context: Context,
@@ -41,7 +42,7 @@ class NotificationWorker(
             notificationManager.createNotificationChannel(channel)
         }
 
-        val intent = Intent(applicationContext, AddMsgActivity::class.java).apply {
+        val intent = Intent(applicationContext, DetailActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra("title", title)
             putExtra("message", message)
@@ -58,7 +59,7 @@ class NotificationWorker(
         val notification = NotificationCompat.Builder(applicationContext, channelId)
             .setContentTitle(title)
             .setContentText(message)
-            .setSmallIcon(R.drawable.ic_launcher_foreground) // Replace with your app's icon
+            .setSmallIcon(R.mipmap.ic_launcher_round) // Replace with your app's icon
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)

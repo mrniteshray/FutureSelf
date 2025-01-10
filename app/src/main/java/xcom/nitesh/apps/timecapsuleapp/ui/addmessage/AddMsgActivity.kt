@@ -72,7 +72,7 @@ class AddMsgActivity : AppCompatActivity() {
             else{
                 val parsedFutureDate = parseSelectedDate(selectedFutureDate ?: "")
                 if (parsedFutureDate != null) {
-                    scheduleNotification(this, "You've got mail from yourself!", title, parsedFutureDate)
+                    scheduleNotification(this, "✨You've got mail from yourself!✨", title, parsedFutureDate)
                 } else {
                     Toast.makeText(this, "Invalid Date. Please select a valid date.", Toast.LENGTH_SHORT).show()
                 }
@@ -118,7 +118,7 @@ class AddMsgActivity : AppCompatActivity() {
         message: String,
         futureDate: LocalDate
     ) {
-        val triggerTime = futureDate.atTime(22, 26) // 8:00 AM
+        val triggerTime = futureDate.atTime(0, 0) // 8:00 AM
             .atZone(ZoneId.systemDefault())
             .toInstant()
             .toEpochMilli()
@@ -162,12 +162,12 @@ class AddMsgActivity : AppCompatActivity() {
             selectedFutureDate = dateFormatter.format(date)
             binding.selectedDateTextView.text = selectedFutureDate
 
-            // Optional: Validate the selected date
             if (selectedFutureDate != null && validateFutureDate(selectedFutureDate!!)) {
                 Toast.makeText(this, "Selected Date: $selectedFutureDate", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Please select a valid future date!", Toast.LENGTH_SHORT).show()
                 selectedFutureDate = null
+                binding.selectedDateTextView.text = ""
             }
         }
 
