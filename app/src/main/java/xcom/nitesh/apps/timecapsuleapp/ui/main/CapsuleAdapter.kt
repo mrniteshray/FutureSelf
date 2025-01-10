@@ -3,16 +3,17 @@ package xcom.nitesh.apps.timecapsuleapp.ui.main
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import xcom.nitesh.apps.timecapsuleapp.Model.Capsule
+import xcom.nitesh.apps.timecapsuleapp.Model.CapsuleData
 import xcom.nitesh.apps.timecapsuleapp.R
 
-class CapsuleAdapter(val caplist : List<Capsule>) : RecyclerView.Adapter<CapsuleAdapter.CapsuleViewHolder>() {
+class CapsuleAdapter(val caplist : List<CapsuleData>) : RecyclerView.Adapter<CapsuleAdapter.CapsuleViewHolder>() {
 
     class CapsuleViewHolder(itemview : View) : RecyclerView.ViewHolder(itemview){
-        val title : TextView = itemview.findViewById(R.id.tvCapsuleContent)
-        val desc : TextView = itemview.findViewById(R.id.tvAdditionalInfo)
+        val title : TextView = itemview.findViewById(R.id.tvCapsuleTitle)
+        val unlockDate : TextView = itemview.findViewById(R.id.unlockDateTV)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CapsuleViewHolder {
@@ -27,6 +28,7 @@ class CapsuleAdapter(val caplist : List<Capsule>) : RecyclerView.Adapter<Capsule
     override fun onBindViewHolder(holder: CapsuleViewHolder, position: Int) {
         var current = caplist[position]
         holder.title.text = current.title
-        holder.desc.text = current.desc
+        holder.unlockDate.text = "Unlock & Notify on : "+current.unlockDate
+
     }
 }

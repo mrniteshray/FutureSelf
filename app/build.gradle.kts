@@ -10,6 +10,10 @@ android {
     namespace = "xcom.nitesh.apps.timecapsuleapp"
     compileSdk = 35
 
+    buildFeatures{
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "xcom.nitesh.apps.timecapsuleapp"
         minSdk = 26
@@ -47,8 +51,11 @@ dependencies {
 
     implementation(libs.hilt.android)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.auth)
+    implementation(libs.play.services.auth)
     kapt(libs.hilt.android.compiler)
 
+    implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.glide)
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
