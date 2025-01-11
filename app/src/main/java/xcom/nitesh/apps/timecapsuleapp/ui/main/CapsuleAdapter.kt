@@ -5,11 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import xcom.nitesh.apps.timecapsuleapp.Model.CapsuleData
 import xcom.nitesh.apps.timecapsuleapp.R
 
-class CapsuleAdapter(val caplist : List<CapsuleData>) : RecyclerView.Adapter<CapsuleAdapter.CapsuleViewHolder>() {
+class CapsuleAdapter(val caplist : List<CapsuleData>, private val onClick: (CapsuleData) -> Unit) : RecyclerView.Adapter<CapsuleAdapter.CapsuleViewHolder>() {
 
     class CapsuleViewHolder(itemview : View) : RecyclerView.ViewHolder(itemview){
         val title : TextView = itemview.findViewById(R.id.tvCapsuleTitle)
@@ -30,5 +31,14 @@ class CapsuleAdapter(val caplist : List<CapsuleData>) : RecyclerView.Adapter<Cap
         holder.title.text = current.title
         holder.unlockDate.text = "Unlock & Notify on : "+current.unlockDate
 
+        if(current.isUnlocked){
+            holder.itemView.setOnClickListener {
+                onClick(current)
+            }
+        } else{
+            holder.itemView.setOnClickListener{
+                Toast.makeText(holder.itemView.context, "Message is locked", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

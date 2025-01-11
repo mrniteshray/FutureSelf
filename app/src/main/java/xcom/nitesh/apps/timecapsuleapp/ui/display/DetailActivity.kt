@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import xcom.nitesh.apps.timecapsuleapp.Model.CapsuleData
 import xcom.nitesh.apps.timecapsuleapp.R
 import xcom.nitesh.apps.timecapsuleapp.databinding.ActivityDetailBinding
+import xcom.nitesh.apps.timecapsuleapp.ui.SignInActivity
 import xcom.nitesh.apps.timecapsuleapp.ui.main.MainActivity
 
 class DetailActivity : AppCompatActivity() {
@@ -30,9 +31,50 @@ class DetailActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         val title = intent.getStringExtra("message")
         fetchmessagebasedontitle(title)
+
+        binding.btnLogout.setOnClickListener {
+            auth.signOut()
+            startActivity(Intent(this, SignInActivity::class.java))
+            finish()
+        }
+        binding.btnDelete.setOnClickListener {
+            deleteMsg(title)
+        }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
+    }
+
+    private fun deleteMsg(title: String?) {
+        firestore.collection("Messages")
+            .document(auth.currentUser?.uid.toString())
+            .collection("capsule")
+            .whereEqualTo("title", title)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val document = querySnapshot.documents[0]
+                    document.reference.delete()
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "Message deleted successfully", Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(this, MainActivity::class.java))
+                            finish()
+                        }
+                        .addOnFailureListener { exception ->
+                            Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    Toast.makeText(this, "No message found with the title: $title", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun fetchmessagebasedontitle(title: String?) {
@@ -51,6 +93,7 @@ class DetailActivity : AppCompatActivity() {
                     binding.textView6.visibility = View.VISIBLE
                     binding.title.text = message[0].title
                     binding.messagetv.text = message[0].content
+                    binding.btnDelete.visibility = View.VISIBLE
                 } else {
                     Toast.makeText(this, "No Message Found", Toast.LENGTH_SHORT).show()
                 }

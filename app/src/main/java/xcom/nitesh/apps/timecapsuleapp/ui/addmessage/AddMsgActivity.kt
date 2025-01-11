@@ -1,31 +1,40 @@
 package xcom.nitesh.apps.timecapsuleapp.ui.addmessage
 
+import android.Manifest
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.content.Context
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
 import android.util.Log
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
 import java.time.LocalDate
 import java.time.ZoneId
-import java.util.concurrent.TimeUnit
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import xcom.nitesh.apps.timecapsuleapp.Model.CapsuleData
 import xcom.nitesh.apps.timecapsuleapp.R
 import xcom.nitesh.apps.timecapsuleapp.databinding.ActivityAddMsgBinding
+import xcom.nitesh.apps.timecapsuleapp.ui.SignInActivity
 import xcom.nitesh.apps.timecapsuleapp.ui.main.MainActivity
-import xcom.nitesh.apps.timecapsuleapp.utils.NotificationWorker
+import xcom.nitesh.apps.timecapsuleapp.utils.NotificationReceiver
+import xcom.nitesh.apps.timecapsuleapp.viewModels.AddMsgViewModel
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -42,8 +51,7 @@ class AddMsgActivity : AppCompatActivity() {
     private var selectedFutureDate: String? = null
     private var selectedFutureTime: String? = null
 
-    private var auth = FirebaseAuth.getInstance()
-    private var DbRef = FirebaseFirestore.getInstance()
+    private val addMsgViewModel = AddMsgViewModel(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,9 +63,31 @@ class AddMsgActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        binding.btnLogout.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            Intent(this, SignInActivity::class.java).also {
+                startActivity(it)
+            }
+            finish()
+        }
+
+        checkAndRequestExactAlarmPermission()
+        createNotificationChannel()
+        checkAndRequestNotificationPermission()
         binding.futureDateButton.setOnClickListener {
             showMaterialDatePicker()
         }
+
+        addMsgViewModel.uiState.observe(this, Observer { value ->
+            if(value){
+                Toast.makeText(this, "Message Added Successfully", Toast.LENGTH_SHORT).show()
+                Intent(this, MainActivity::class.java).also {
+                    startActivity(it)
+                }
+                finish()
+            }
+        })
 
         binding.Savebtn.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE
@@ -85,62 +115,37 @@ class AddMsgActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(this, "Invalid Date. Please select a valid date.", Toast.LENGTH_SHORT).show()
                 }
-                saveToFirebase(title, message, selectedFutureDate!!,selectedFutureTime!!)
+                addMsgViewModel.saveToFirebase(title, message, selectedFutureDate!!,selectedFutureTime!!)
             }
         }
 
-
-        val title = intent.getStringExtra("title")
-        binding.title.setText(title)
-
     }
 
-    private fun saveToFirebase(title: String, message: String, selectedFutureDate: String,selectedFutureTime: String) {
-        val currentuser = auth.currentUser?.uid
 
-        val newMessage = CapsuleData(
-            title = title,
-            content = message,
-            createdDate = dateFormatter.format(Date()),
-            unlockDate = selectedFutureDate,
-            unlockTime = selectedFutureTime,
-            isUnlocked = false
+    private fun scheduleNotification(context: Context, title: String, message: String, futureDateTime: LocalDateTime) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val intent = Intent(context, NotificationReceiver::class.java).apply {
+            putExtra("title", title)
+            putExtra("message", message)
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            futureDateTime.hashCode(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        DbRef.collection("Messages")
-            .document(currentuser.toString())
-            .collection("capsule")
-            .add(newMessage)
-            .addOnSuccessListener {
-                binding.progressBar.visibility = View.GONE
-                Intent(this, MainActivity::class.java).also {
-                    startActivity(it)
-                }
-            }
-    }
-
-    fun scheduleNotification(
-        context: Context,
-        title: String,
-        message: String,
-        futureDate: LocalDateTime
-    ) {
-        val triggerTime = futureDate
+        val triggerTimeMillis = futureDateTime
             .atZone(ZoneId.systemDefault())
             .toInstant()
             .toEpochMilli()
-        val delay = triggerTime - System.currentTimeMillis()
-        val data = workDataOf(
-            "title" to title,
-            "message" to message
+
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            triggerTimeMillis,
+            pendingIntent
         )
-
-        val notificationWorkRequest = OneTimeWorkRequestBuilder<NotificationWorker>()
-            .setInputData(data)
-            .setInitialDelay(delay, TimeUnit.MILLISECONDS)
-            .build()
-
-        WorkManager.getInstance(context).enqueue(notificationWorkRequest)
     }
 
     private fun showMaterialDatePicker() {
@@ -194,4 +199,73 @@ class AddMsgActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // Request the permission
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    NOTIFICATION_PERMISSION_REQUEST_CODE
+                )
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Notification permission granted!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Notification permission denied. Notifications won't work.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    companion object {
+        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Capsule Channel"
+            val descriptionText = "Channel for capsule notifications"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel("capsule_channel", name, importance).apply {
+                description = descriptionText
+            }
+
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun checkAndRequestExactAlarmPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // Android 12+
+            val alarmManager = getSystemService(AlarmManager::class.java)
+            if (!alarmManager.canScheduleExactAlarms()) {
+                // Notify the user or direct them to settings
+                AlertDialog.Builder(this)
+                    .setTitle("Enable Exact Alarm Permission")
+                    .setMessage("This app requires exact alarm permission to schedule future notifications. Please enable it in the app settings.")
+                    .setPositiveButton("Open Settings") { _, _ ->
+                        val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                            data = Uri.parse("package:$packageName")
+                        }
+                        startActivity(intent)
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
+            }
+        }
+    }
 }

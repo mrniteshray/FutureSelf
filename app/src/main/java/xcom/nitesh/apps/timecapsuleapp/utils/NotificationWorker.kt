@@ -42,25 +42,12 @@ class NotificationWorker(
             notificationManager.createNotificationChannel(channel)
         }
 
-        val intent = Intent(applicationContext, DetailActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra("title", title)
-            putExtra("message", message)
-        }
 
-        // Create PendingIntent
-        val pendingIntent = PendingIntent.getActivity(
-            applicationContext,
-            0,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE // For Android 12+
-        )
 
         val notification = NotificationCompat.Builder(applicationContext, channelId)
             .setContentTitle(title)
             .setContentText(message)
-            .setSmallIcon(R.mipmap.ic_launcher_round) // Replace with your app's icon
-            .setContentIntent(pendingIntent)
+            .setSmallIcon(R.mipmap.ic_launcher_round)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()

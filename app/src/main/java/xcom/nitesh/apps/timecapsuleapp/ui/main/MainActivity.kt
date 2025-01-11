@@ -14,7 +14,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
@@ -22,8 +21,11 @@ import xcom.nitesh.apps.timecapsuleapp.R
 import xcom.nitesh.apps.timecapsuleapp.databinding.ActivityMainBinding
 import xcom.nitesh.apps.timecapsuleapp.ui.SignInActivity
 import xcom.nitesh.apps.timecapsuleapp.ui.addmessage.AddMsgActivity
+import xcom.nitesh.apps.timecapsuleapp.ui.display.DetailActivity
+import xcom.nitesh.apps.timecapsuleapp.viewModels.MainViewModel
 
 class MainActivity : AppCompatActivity() {
+
 
     private val requestNotificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -60,14 +62,26 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.fetchData()
 
         mainViewModel.messages.observe(this, Observer {
-            capsuleAdapter = CapsuleAdapter(it)
+            if (it.isEmpty()){
+                binding.textView7.visibility = View.VISIBLE
+                binding.progressBar2.visibility = View.GONE
+            }
+            capsuleAdapter = CapsuleAdapter(it){ message->
+                Intent(this, DetailActivity::class.java).also {
+                    it.putExtra("message",message.title)
+                    startActivity(it)
+                    finish()
+                }
+            }
             binding.rec.adapter = capsuleAdapter
             binding.progressBar2.visibility = View.GONE
+            capsuleAdapter.notifyDataSetChanged()
         })
 
         binding.btnFab.setOnClickListener {
             Intent(this, AddMsgActivity::class.java).also {
                 startActivity(it)
+                finish()
             }
         }
 
@@ -78,20 +92,18 @@ class MainActivity : AppCompatActivity() {
             }
             finish()
         }
-
     }
-
-    private fun checkAndRequestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-            } else {
-                // Request the permission
-                requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        fun checkAndRequestNotificationPermission() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                } else {
+                    // Request the permission
+                    requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
             }
         }
-    }
 }
