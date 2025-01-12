@@ -24,12 +24,11 @@ class NotificationReceiver : BroadcastReceiver() {
             putExtra("message", message)
         }
 
-        // Create PendingIntent
         val pendingIntent = PendingIntent.getActivity(
             context,
             0,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE // For Android 12+
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         val notification = NotificationCompat.Builder(context, "capsule_channel")
             .setContentTitle(title)

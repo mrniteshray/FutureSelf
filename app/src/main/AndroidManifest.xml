@@ -4,7 +4,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
@@ -17,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TimeCapsuleApp"
         tools:targetApi="31">
+
         <activity
             android:name=".ui.display.DetailActivity"
             android:exported="false" />
@@ -44,7 +44,6 @@
         </activity>
 
         <receiver android:name=".utils.NotificationReceiver" />
-
     </application>
 
 </manifest>

@@ -31,6 +31,16 @@ class DetailActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        if(auth.currentUser!=null){
+        }else{
+            Toast.makeText(this, "Please SignIn First", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, SignInActivity::class.java))
+            finish()
+        }
+
+        binding.messagetv.movementMethod = android.text.method.ScrollingMovementMethod()
+
         val title = intent.getStringExtra("message")
         fetchmessagebasedontitle(title)
 
@@ -51,30 +61,40 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun deleteMsg(title: String?) {
-        firestore.collection("Messages")
-            .document(auth.currentUser?.uid.toString())
-            .collection("capsule")
-            .whereEqualTo("title", title)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                if (!querySnapshot.isEmpty) {
-                    val document = querySnapshot.documents[0]
-                    document.reference.delete()
-                        .addOnSuccessListener {
-                            Toast.makeText(this, "Message deleted successfully", Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this, MainActivity::class.java))
-                            finish()
-                        }
-                        .addOnFailureListener { exception ->
-                            Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
-                        }
-                } else {
-                    Toast.makeText(this, "No message found with the title: $title", Toast.LENGTH_SHORT).show()
+        val alertDialog = android.app.AlertDialog.Builder(this)
+        alertDialog.setTitle("Delete Message")
+        alertDialog.setMessage("Are you sure you want to delete this message?")
+        alertDialog.setPositiveButton("Yes") { _, _ ->
+            firestore.collection("Messages")
+                .document(auth.currentUser?.uid.toString())
+                .collection("capsule")
+                .whereEqualTo("title", title)
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    if (!querySnapshot.isEmpty) {
+                        val document = querySnapshot.documents[0]
+                        document.reference.delete()
+                            .addOnSuccessListener {
+                                Toast.makeText(this, "Message deleted successfully", Toast.LENGTH_SHORT).show()
+                                startActivity(Intent(this, MainActivity::class.java))
+                                finish()
+                            }
+                            .addOnFailureListener { exception ->
+                                Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
+                            }
+                    } else {
+                        Toast.makeText(this, "No message found with the title: $title", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
-            .addOnFailureListener { exception ->
-                Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
-            }
+                .addOnFailureListener { exception ->
+                    Toast.makeText(this, "Error: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+        alertDialog.setNegativeButton("No") { dialog, _ ->
+            dialog.dismiss()
+        }
+        alertDialog.show()
+
     }
 
     private fun fetchmessagebasedontitle(title: String?) {
@@ -95,6 +115,9 @@ class DetailActivity : AppCompatActivity() {
                     binding.messagetv.text = message[0].content
                     binding.btnDelete.visibility = View.VISIBLE
                 } else {
+                    binding.progressBar.visibility = View.GONE
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
                     Toast.makeText(this, "No Message Found", Toast.LENGTH_SHORT).show()
                 }
             }

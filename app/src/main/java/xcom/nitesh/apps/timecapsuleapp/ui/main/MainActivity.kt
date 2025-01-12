@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity() {
             capsuleAdapter = CapsuleAdapter(it){ message->
                 Intent(this, DetailActivity::class.java).also {
                     it.putExtra("message",message.title)
+                    it.putExtra("content",message.content)
                     startActivity(it)
                     finish()
                 }
