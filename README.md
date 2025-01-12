@@ -1,7 +1,8 @@
-# FutureSelf 🚀  
-✨ **Your Personal Time Capsule App** ✨  
-
-Ever wanted to send a message to your future self? 💭 With **FutureSelf**, you can leave behind notes, reminders, or goals that will unlock on a special day in the future!  
+![Banner Image](https://i.postimg.cc/FmvbBV4q/Whats-App-Image-2025-01-12-at-03-03-48-a23f085f.jpg)
+# 🚀  FutureSelf 
+✨ **A TimeCapsule Android App** ✨  
+An Android app where you can write a message to your future self—whether it’s a goal, a reminder, or even words of encouragement.
+💭 With **FutureSelf**, you can leave behind notes, reminders, or goals that will unlock on a special day in the future!  
 
 ---
 
