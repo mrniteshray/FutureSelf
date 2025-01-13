@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import xcom.nitesh.apps.timecapsuleapp.Model.CapsuleData
+import xcom.nitesh.apps.timecapsuleapp.data.Model.CapsuleData
 import xcom.nitesh.apps.timecapsuleapp.R
 
 class CapsuleAdapter(val caplist : List<CapsuleData>, private val onClick: (CapsuleData) -> Unit) : RecyclerView.Adapter<CapsuleAdapter.CapsuleViewHolder>() {

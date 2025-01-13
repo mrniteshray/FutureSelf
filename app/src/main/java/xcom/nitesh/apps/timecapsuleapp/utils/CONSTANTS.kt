@@ -6,7 +6,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import xcom.nitesh.apps.timecapsuleapp.Model.CapsuleData
+import xcom.nitesh.apps.timecapsuleapp.data.Model.CapsuleData
 
 class CONSTANTS {
 

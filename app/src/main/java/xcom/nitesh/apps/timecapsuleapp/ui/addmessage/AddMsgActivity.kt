@@ -29,12 +29,13 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
 import xcom.nitesh.apps.timecapsuleapp.R
 import xcom.nitesh.apps.timecapsuleapp.databinding.ActivityAddMsgBinding
 import xcom.nitesh.apps.timecapsuleapp.ui.SignInActivity
 import xcom.nitesh.apps.timecapsuleapp.ui.main.MainActivity
 import xcom.nitesh.apps.timecapsuleapp.utils.NotificationReceiver
-import xcom.nitesh.apps.timecapsuleapp.viewModels.AddMsgViewModel
+import xcom.nitesh.apps.timecapsuleapp.data.viewModels.AddMsgViewModel
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -42,7 +43,9 @@ import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AddMsgActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddMsgBinding
@@ -51,7 +54,8 @@ class AddMsgActivity : AppCompatActivity() {
     private var selectedFutureDate: String? = null
     private var selectedFutureTime: String? = null
 
-    private val addMsgViewModel = AddMsgViewModel(this)
+    @Inject
+    lateinit var addMsgViewModel: AddMsgViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,18 +99,7 @@ class AddMsgActivity : AppCompatActivity() {
             val message = binding.messagetv.text.toString()
             if(title.isEmpty() || message.isEmpty() || selectedFutureDate == null || selectedFutureTime == null){
                 binding.progressBar.visibility = View.GONE
-                if(title.isEmpty()){
-                    Toast.makeText(this, "Please Enter Title", Toast.LENGTH_SHORT).show()
-                }
-                if(message.isEmpty()) {
-                    Toast.makeText(this, "Please Enter Message", Toast.LENGTH_SHORT).show()
-                }
-                if(selectedFutureDate == null){
-                    Toast.makeText(this, "Please Select Future Date", Toast.LENGTH_SHORT).show()
-                }
-                if(selectedFutureTime == null){
-                    Toast.makeText(this, "Please Select Future Time", Toast.LENGTH_SHORT).show()
-                }
+                showValidationErrors(title, message)
             }
             else{
                 val parsedFutureDate = parseSelectedDateTime(selectedFutureDate, selectedFutureTime)
@@ -119,6 +112,13 @@ class AddMsgActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    private fun showValidationErrors(title: String, message: String) {
+        if (title.isEmpty()) Toast.makeText(this, "Please Enter Title", Toast.LENGTH_SHORT).show()
+        if (message.isEmpty()) Toast.makeText(this, "Please Enter Message", Toast.LENGTH_SHORT).show()
+        if (selectedFutureDate == null) Toast.makeText(this, "Please Select Future Date", Toast.LENGTH_SHORT).show()
+        if (selectedFutureTime == null) Toast.makeText(this, "Please Select Future Time", Toast.LENGTH_SHORT).show()
     }
 
 
@@ -146,6 +146,14 @@ class AddMsgActivity : AppCompatActivity() {
             triggerTimeMillis,
             pendingIntent
         )
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        Intent(this, MainActivity::class.java).also {
+            startActivity(it)
+        }
+        finish()
     }
 
     private fun showMaterialDatePicker() {

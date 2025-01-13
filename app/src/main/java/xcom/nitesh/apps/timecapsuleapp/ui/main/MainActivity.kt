@@ -17,15 +17,17 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
 import xcom.nitesh.apps.timecapsuleapp.R
 import xcom.nitesh.apps.timecapsuleapp.databinding.ActivityMainBinding
 import xcom.nitesh.apps.timecapsuleapp.ui.SignInActivity
 import xcom.nitesh.apps.timecapsuleapp.ui.addmessage.AddMsgActivity
 import xcom.nitesh.apps.timecapsuleapp.ui.display.DetailActivity
-import xcom.nitesh.apps.timecapsuleapp.viewModels.MainViewModel
+import xcom.nitesh.apps.timecapsuleapp.data.viewModels.MainViewModel
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
 
     private val requestNotificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -39,7 +41,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     lateinit var capsuleAdapter: CapsuleAdapter
 
-    private lateinit var mainViewModel : MainViewModel
+    @Inject
+    lateinit var mainViewModel : MainViewModel
 
     private val auth = FirebaseAuth.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +58,6 @@ class MainActivity : AppCompatActivity() {
 
         checkAndRequestNotificationPermission()
 
-        mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
         binding.rec.layoutManager = LinearLayoutManager(this)
 

@@ -1,4 +1,4 @@
-package xcom.nitesh.apps.timecapsuleapp.Model
+package xcom.nitesh.apps.timecapsuleapp.data.Model
 
 import java.io.Serializable
 

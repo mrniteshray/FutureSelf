@@ -1,4 +1,4 @@
-package xcom.nitesh.apps.timecapsuleapp.viewModels
+package xcom.nitesh.apps.timecapsuleapp.data.viewModels
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -6,13 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import xcom.nitesh.apps.timecapsuleapp.Model.CapsuleData
+import xcom.nitesh.apps.timecapsuleapp.data.Model.CapsuleData
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
 
-class MainViewModel : ViewModel() {
+class MainViewModel @Inject constructor() : ViewModel() {
     private val _messagelist = MutableLiveData<List<CapsuleData>>()
     val messages: LiveData<List<CapsuleData>> get() = _messagelist
     private val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
