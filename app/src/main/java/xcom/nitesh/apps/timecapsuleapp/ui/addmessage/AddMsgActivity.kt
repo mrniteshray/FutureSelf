@@ -53,7 +53,7 @@ class AddMsgActivity : AppCompatActivity() {
     private val timeFormatter = SimpleDateFormat("HH:mm", Locale.getDefault())
     private var selectedFutureDate: String? = null
     private var selectedFutureTime: String? = null
-
+    private var auth = FirebaseAuth.getInstance().currentUser
     @Inject
     lateinit var addMsgViewModel: AddMsgViewModel
 
@@ -104,7 +104,7 @@ class AddMsgActivity : AppCompatActivity() {
             else{
                 val parsedFutureDate = parseSelectedDateTime(selectedFutureDate, selectedFutureTime)
                 if (parsedFutureDate != null) {
-                    scheduleNotification(this, "✨You've got mail from yourself!✨", title, parsedFutureDate)
+                    scheduleNotification(this, "✨You've got mail from yourself!✨", title, parsedFutureDate,message)
                 } else {
                     Toast.makeText(this, "Invalid Date. Please select a valid date.", Toast.LENGTH_SHORT).show()
                 }
@@ -122,12 +122,14 @@ class AddMsgActivity : AppCompatActivity() {
     }
 
 
-    private fun scheduleNotification(context: Context, title: String, message: String, futureDateTime: LocalDateTime) {
+    private fun scheduleNotification(context: Context, title: String, message: String, futureDateTime: LocalDateTime,actualmsg : String) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, NotificationReceiver::class.java).apply {
             putExtra("title", title)
             putExtra("message", message)
+            putExtra("actualmsg",actualmsg)
+            putExtra("toEmail",auth?.email.toString())
         }
         val pendingIntent = PendingIntent.getBroadcast(
             context,
