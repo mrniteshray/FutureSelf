@@ -23,7 +23,6 @@ import xcom.nitesh.apps.timecapsuleapp.ui.SignInActivity
 import xcom.nitesh.apps.timecapsuleapp.ui.addmessage.AddMsgActivity
 import xcom.nitesh.apps.timecapsuleapp.ui.display.DetailActivity
 import xcom.nitesh.apps.timecapsuleapp.data.viewModels.MainViewModel
-import xcom.nitesh.apps.timecapsuleapp.utils.CONSTANTS.Companion.getApiKey
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -104,7 +103,6 @@ class MainActivity : AppCompatActivity() {
                     ) == PackageManager.PERMISSION_GRANTED
                 ) {
                 } else {
-                    // Request the permission
                     requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
             }
