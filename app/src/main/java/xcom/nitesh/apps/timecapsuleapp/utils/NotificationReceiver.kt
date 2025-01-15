@@ -76,9 +76,9 @@ class NotificationReceiver : BroadcastReceiver() {
             RetrofitInstance.apiservice(context).sendEmail(emailRequest).enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {
-                        Toast.makeText(context, "Email sent to $toEmail", Toast.LENGTH_SHORT).show()
+                
                     } else {
-                        Toast.makeText(context, "Failed to send email", Toast.LENGTH_SHORT).show()
+                    
                     }
                 }
 
