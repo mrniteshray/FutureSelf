@@ -7,9 +7,9 @@ An Android app where you can write a message to your future self—whether it’
 ---
 
 ## 🛠 Features  
-- 📝 Write a personal message and save it.  
+- 📝 Write a message and save it for your future self.
 - 📅 Choose a future date for the message to unlock.  
-- 🔔 Get notified when your message is ready to be read.  
+- 🔔 Get notified & email when your message is ready to be read.  
 - 🎨 Sleek and interactive vertical timeline UI.  
 
 ---
@@ -22,7 +22,7 @@ An Android app where you can write a message to your future self—whether it’
 ## 📖 How It Works  
 1. 🖋 Write a title and your message.  
 2. 📅 Select a future date.  
-3. 🔔 Receive a notification on the set date and read your message!  
+3. 🔔 Receive a notification & email on the set date and read your message!  
 
 ---
 
