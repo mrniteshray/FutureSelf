@@ -14,7 +14,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,6 +23,7 @@ import xcom.nitesh.apps.timecapsuleapp.ui.SignInActivity
 import xcom.nitesh.apps.timecapsuleapp.ui.addmessage.AddMsgActivity
 import xcom.nitesh.apps.timecapsuleapp.ui.display.DetailActivity
 import xcom.nitesh.apps.timecapsuleapp.data.viewModels.MainViewModel
+import xcom.nitesh.apps.timecapsuleapp.utils.CONSTANTS.Companion.getApiKey
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -55,6 +55,10 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+
+        val api_key = getApiKey(this)
+        Toast.makeText(this, api_key, Toast.LENGTH_SHORT).show()
 
         checkAndRequestNotificationPermission()
 

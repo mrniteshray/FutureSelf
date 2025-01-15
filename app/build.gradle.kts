@@ -13,14 +13,12 @@ android {
     buildFeatures{
         viewBinding = true
     }
-
     defaultConfig {
         applicationId = "xcom.nitesh.apps.timecapsuleapp"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

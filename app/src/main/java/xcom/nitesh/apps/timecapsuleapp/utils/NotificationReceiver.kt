@@ -72,9 +72,8 @@ class NotificationReceiver : BroadcastReceiver() {
             subject = subject,
             textContent = body
         )
-
         CoroutineScope(Dispatchers.IO).launch {
-            RetrofitInstance.api.sendEmail(emailRequest).enqueue(object : Callback<Void> {
+            RetrofitInstance.apiservice(context).sendEmail(emailRequest).enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {
                         Toast.makeText(context, "Email sent to $toEmail", Toast.LENGTH_SHORT).show()
