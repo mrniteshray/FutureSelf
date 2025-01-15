@@ -56,10 +56,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-
-        val api_key = getApiKey(this)
-        Toast.makeText(this, api_key, Toast.LENGTH_SHORT).show()
-
         checkAndRequestNotificationPermission()
 
 
