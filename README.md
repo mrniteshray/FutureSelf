@@ -14,6 +14,10 @@ An Android app where you can write a message to your future self—whether it’
 
 ---
 
+## ⛓️‍💥To Download :
+- <a href="https://github.com/mrniteshray/FutureSelf/releases/download/v1.0/FutureSelf.apk">Click Here...</a>
+---
+
 ## 📱 Screenshots  
 > *(Will add Screenshots soon)*  
 
